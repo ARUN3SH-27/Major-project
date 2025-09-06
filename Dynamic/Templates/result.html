@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Analysis results for Twitter account @{{ result.username }} with AI insights.">
+    <title>Analysis Result - @{{ result.username }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
+    <link href="https://unpkg.com/tippy.js@6/dist/tippy.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+    <script src="https://unpkg.com/tippy.js@6/dist/tippy-bundle.umd.js" defer></script>
+    <style>
+        body.dark-mode {
+            background: #121212;
+            color: #e0e0e0;
+            font-family: 'Arial', sans-serif;
+        }
+        .header {
+            text-align: center;
+            padding: 20px;
+            background: #1e1e1e;
+            border-bottom: 2px solid #333;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .result-card {
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .result-card.fake { background: #ff4d4d; }
+        .result-card.genuine { background: #4caf50; }
+        .confidence-value { font-weight: bold; }
+        .risk-score-section, .account-details, .stacked-chart-section, 
+        .time-series-section, .feature-breakdown, .comparison-section,
+        .network-section, .content-analysis, .recommendations, .export-options {
+            background: #1e1e1e;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        .progress-container {
+            text-align: center;
+        }
+        .progress-bar {
+            background: #333;
+            border-radius: 5px;
+            height: 20px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        .progress {
+            background: linear-gradient(90deg, #ff4d4d, #ff9800);
+            height: 100%;
+            transition: width 1s ease-in-out;
+        }
+        .details-list {
+            list-style: none;
+            padding: 0;
+        }
+        .details-list li {
+            margin: 10px 0;
+        }
+        .back-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #0288d1;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .back-btn:hover {
+            background: #0277bd;
+        }
+        .footer {
+            text-align: center;
+            padding: 20px;
+            background: #1e1e1e;
+            border-top: 2px solid #333;
+        }
+        .stacked-chart-section canvas, .time-series-section canvas {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        /* Feature Breakdown Styles */
+        .indicator-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .indicator-card {
+            background: #252525;
+            padding: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .indicator-card:hover {
+            transform: translateY(-3px);
+        }
+        .indicator-value {
+            height: 8px;
+            background: #333;
+            border-radius: 4px;
+            margin: 10px 0;
+            position: relative;
+        }
+        .indicator-value::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: var(--value);
+            background: linear-gradient(90deg, #ff4d4d, #ff9800);
+            border-radius: 4px;
+        }
+        .indicator-value span {
+            position: absolute;
+            right: 0;
+            top: -20px;
+            font-size: 12px;
+        }
+        .indicator-desc {
+            font-size: 13px;
+            color: #b0b0b0;
+            margin-top: 10px;
+        }
+        
+        /* Comparison Section Styles */
+        .comparison-metrics {
+            margin-top: 20px;
+        }
+        .metric {
+            margin-bottom: 25px;
+        }
+        .comparison-bar {
+            background: #333;
+            height: 30px;
+            border-radius: 15px;
+            margin: 10px 0;
+            position: relative;
+        }
+        .actual {
+            background: linear-gradient(90deg, #0288d1, #4fc3f7);
+            height: 100%;
+            border-radius: 15px;
+            padding-left: 10px;
+            color: white;
+            line-height: 30px;
+            font-size: 12px;
+        }
+        .benchmark {
+            position: absolute;
+            right: 10px;
+            top: 0;
+            line-height: 30px;
+            color: #e0e0e0;
+            font-size: 12px;
+        }
+        
+        /* Network Section Styles */
+        .network-placeholder {
+            text-align: center;
+        }
+        .graph-container {
+            margin-top: 15px;
+            background: #252525;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        
+        /* Content Analysis Styles */
+        .content-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .stat {
+            background: #252525;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .tag {
+            background: #333;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+        }
+        .sentiment-meter {
+            height: 10px;
+            background: linear-gradient(90deg, #ff4d4d 0%, #ffeb3b 50%, #4caf50 100%);
+            margin: 15px 0;
+            position: relative;
+        }
+        .sentiment-meter::after {
+            content: '';
+            position: absolute;
+            left: var(--sentiment);
+            top: -5px;
+            width: 2px;
+            height: 20px;
+            background: white;
+        }
+        .sentiment-meter span {
+            font-size: 12px;
+            position: absolute;
+            top: 15px;
+        }
+        .negative { left: 0; }
+        .positive { right: 0; }
+        
+        /* Recommendations Styles */
+        .rec-card {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        .rec-card.warning {
+            background: rgba(255, 77, 77, 0.2);
+            border-left: 4px solid #ff4d4d;
+        }
+        .rec-card.safe {
+            background: rgba(76, 175, 80, 0.2);
+            border-left: 4px solid #4caf50;
+        }
+        .rec-card ul {
+            padding-left: 20px;
+        }
+        .rec-card li {
+            margin: 8px 0;
+            font-size: 14px;
+        }
+        
+        /* Export Options Styles */
+        .export-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+        .export-btn {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: opacity 0.2s;
+        }
+        .export-btn:hover {
+            opacity: 0.9;
+        }
+        .export-btn.pdf { background: #f44336; color: white; }
+        .export-btn.csv { background: #4caf50; color: white; }
+        .export-btn.share { background: #2196f3; color: white; }
+        
+        @media (max-width: 768px) {
+            .indicator-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .content-stats {
+                grid-template-columns: 1fr;
+            }
+            .export-buttons {
+                flex-direction: column;
+            }
+            .export-btn {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <header class="header">
+        <h1>Analysis Result for @{{ result.username }}</h1>
+    </header>
+
+    <main class="container">
+        <section class="result-card {{ 'fake' if result.prediction == 'fake' else 'genuine' }}">
+            <h2>Prediction: {{ result.prediction | capitalize }}</h2>
+            <p class="confidence">Confidence: <span class="confidence-value">{{ result.confidence }}%</span></p>
+        </section>
+
+        <!-- Adaptive AI Risk Score -->
+        <section class="risk-score-section">
+            <h2>Risk Score</h2>
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div class="progress" style="width: {{ result.confidence }}%;"></div>
+                </div>
+                <p class="risk-text">Risk Level: {{ result.confidence }}%</p>
+                
+            </div>
+        </section>
+
+        <!-- Account Details -->
+        <section class="account-details">
+            <h2>Account Overview</h2>
+            <ul class="details-list">
+                <li><strong>Followers:</strong> {{ result.features.followers_count | comma }}</li>
+                <li><strong>Friends:</strong> {{ result.features.friends_count | comma }}</li>
+                <li><strong>Tweets:</strong> {{ result.features.statuses_count | comma }}</li>
+                <li><strong>Listings:</strong> {{ result.features.listed_count | comma }}</li>
+                <li><strong>Created:</strong> {{ result.account_data.created_at | format_date }}</li>
+                <li><strong>Description:</strong> {{ result.account_data.description }}</li>
+                <li><strong>Data Source:</strong> {{ result.account_data.source }}</li>
+            </ul>
+        </section>
+         </div>
+</section>
+
+        <!-- Comparative Analysis -->
+        <section class="comparison-section">
+            <h2>Compared to Typical Accounts</h2>
+            <div class="comparison-metrics">
+                <div class="metric">
+                    <h3>Followers/Following Ratio</h3>
+                    <div class="comparison-bar">
+                        <div class="actual" style="width: {{ [(result.features.followers_count / (result.features.friends_count + 1)) * 10, 100]|min }}%">
+                            @{{ result.username }}: {{ "%.2f"|format(result.features.followers_count / (result.features.friends_count + 1)) }}
+                        </div>
+                        <div class="benchmark">Average: 1.8</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Recommendations Section -->
+        <section class="recommendations">
+            <h2>Recommendations</h2>
+            <div class="recommendation-cards">
+                {% if result.prediction == 'fake' %}
+                <div class="rec-card warning">
+                    <h3>⚠️ Caution Recommended</h3>
+                    <p>This account shows several characteristics commonly associated with inauthentic behavior:</p>
+                    <ul>
+                        <li>High follower/following ratio mismatch</li>
+                        <li>Irregular posting patterns</li>
+                        <li>Low engagement authenticity score</li>
+                    </ul>
+                    <p style="margin-top: 10px;"><strong>Suggested Action:</strong> Verify information from this account through other sources before trusting or sharing.</p>
+                </div>
+                {% else %}
+                <div class="rec-card safe">
+                    <h3>✅ Appears Genuine</h3>
+                    <p>This account shows patterns consistent with authentic human behavior:</p>
+                    <ul>
+                        <li>Natural engagement patterns</li>
+                        <li>Consistent posting history</li>
+                        <li>Balanced network metrics</li>
+                    </ul>
+                    <p style="margin-top: 10px;"><strong>Suggested Action:</strong> No special precautions needed, but always practice general online safety.</p>
+                </div>
+                {% endif %}
+            </div>
+        </section>
+
+        <a href="/" class="back-btn" aria-label="Return to Home">Analyze Another Account</a>
+    </main>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/tippy.js@6/dist/tippy-bundle.umd.js"></script>
+    <script>
+        // Initialize tooltips
+        tippy('[data-tippy-content]', {
+            theme: 'dark',
+            delay: [100, 200],
+        });
+
+        // Time Series Chart
+        {% if result.features.get('engagement_timestamps') and result.features.get('engagement_values') %}
+        const ctxTimeSeries = document.getElementById('timeSeriesChart').getContext('2d');
+        new Chart(ctxTimeSeries, {
+            type: 'line',
+            data: {
+                labels: {{ result.features.engagement_timestamps | tojson }},
+                datasets: [{
+                    label: 'Engagement Trend',
+                    data: {{ result.features.engagement_values | tojson }},
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    backgroundColor: 'rgba(255, 99, 132, 0.3)',
+                    borderWidth: 2,
+                    pointBackgroundColor: 'rgba(255, 99, 132, 1)',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2,
+                    pointRadius: 5,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: { 
+                        ticks: { 
+                            color: '#e0e0e0', 
+                            font: { size: 12 }, 
+                            maxRotation: 45, 
+                            minRotation: 45 
+                        }, 
+                        grid: { 
+                            color: 'rgba(255, 255, 255, 0.1)' 
+                        } 
+                    },
+                    y: { 
+                        beginAtZero: true, 
+                        ticks: { 
+                            color: '#e0e0e0', 
+                            font: { size: 12 } 
+                        }, 
+                        grid: { 
+                            color: 'rgba(255, 255, 255, 0.1)' 
+                        } 
+                    }
+                },
+                plugins: {
+                    legend: { 
+                        labels: { 
+                            color: '#e0e0e0', 
+                            font: { size: 14 } 
+                        } 
+                    },
+                    tooltip: { 
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)', 
+                        padding: 10 
+                    }
+                },
+                animation: { 
+                    duration: 1500, 
+                    easing: 'easeOutQuart' 
+                }
+            }
+        });
+        {% endif %}
+
+        
+        // Interactive indicator cards
+        document.querySelectorAll('.indicator-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const feature = this.querySelector('h3').textContent;
+                const value = this.querySelector('.indicator-value span').textContent;
+                
+                // In a real implementation, this would show a detailed modal
+                alert(`Detailed analysis for ${feature} (${value} impact):\n\nThis metric measures how much the ${feature.toLowerCase()} contributes to the overall prediction. ${value} indicates it has ${parseFloat(value) > 70 ? 'strong' : parseFloat(value) > 40 ? 'moderate' : 'weak'} influence on the final decision.`);
+            });
+        });
+    </script>
+</body>
+</html>
