@@ -1,62 +1,69 @@
-🌍 LRX: Air Quality Index (AQI) Prediction and Visualization
+🕵️ Fake Social Media Account Detection
 
-This repository contains the implementation of LRX, a hybrid predictive model for real-time Air Quality Index (AQI) forecasting and visualization.
-The model combines Long Short-Term Memory (LSTM), Random Forest Regressor (RFR), and XGBoost (XGB) to capture temporal patterns, non-linear dependencies, and fine-tuned accuracy improvements.
+This repository contains the implementation of a Fake Social Media Account Detection system. The project combines machine learning techniques with a Flask-based web application to classify accounts as real or fake based on behavioral and profile features.
 
 🔍 Overview
 
-Problem: Air pollution significantly impacts public health, yet existing forecasting methods often lack robustness across varying conditions.
-Proposed Solution: LRX, a hybrid model leveraging the strengths of:
-LSTM → captures temporal dependencies in AQI data.
-RFR → enhances stability by handling non-linear relationships.
-XGB → improves fine-grained prediction accuracy.
+Problem
+Fake accounts on social media spread misinformation, scams, and spam, undermining trust and security. Traditional detection methods often fail to adapt to diverse patterns of fake accounts.
 
-Key Features:
-Data preprocessing (missing value handling, encoding, normalization).
-Hybrid ensemble prediction pipeline.
-Visualization of AQI distribution and state-wise maps.
+Proposed Solution
+We built a detection system that leverages:
 
+Random Forest & SVM → baseline classification accuracy.
 
----
+XGBoost → fine-tuned detection and better handling of feature importance.
 
-### ⚡ How to Run Your App
+Flask Web App → provides an interactive interface for users to test accounts.
 
-Since your main entry point is `app.py`, here’s what to do:
+Key Features
 
-#### 1. Install dependencies
+Preprocessing pipeline: missing value handling, feature encoding, normalization.
 
-Navigate into the `Dynamic` folder and install the required libraries:
+Model training and evaluation with accuracy metrics & feature importance plots.
 
-```bash
+Flask-based web interface (Templates/ + Static/) for real-time account classification.
+
+MongoDB integration for storing and exporting datasets (users.csv, fusers.csv).
+
+⚡ How to Run Your App
+
+Since your main entry point is app.py, here’s what to do:
+
+1. Install dependencies
+
+Navigate into the Dynamic folder and install the required libraries:
+
 cd Dynamic
 pip install -r requirements.txt
-```
 
-#### 2. Run the Streamlit app
-
-Now run:
-
-```bash
-streamlit run app.py
-```
-
-#### 3. Access in browser
-
-* Streamlit will start a server and give you a link like:
-
-  ```
-  http://localhost:8501
-  ```
-* Open it in your browser → you’ll see your Air Quality Detection dashboard.
-
----
-
-⚠️ One thing I noticed: your project has `Templates/` and `Static/` folders (Flask/Django style). If `app.py` is actually a **Flask app** (not Streamlit), then the way to run it changes:
-
-```bash
+2. Run the Flask app
 python app.py
-```
 
-and then open `http://127.0.0.1:5000` in the browser.
+3. Access in browser
 
----
+Flask will start a server at:
+
+👉 http://127.0.0.1:5000
+
+Open it in your browser → you’ll see the Fake Account Detection dashboard.
+
+📂 Project Structure
+.
+├── Dynamic/
+│   ├── app.py           # Main Flask application
+│   ├── fusers.csv       # Fake users dataset
+│   ├── users.csv        # Real users dataset
+│   ├── image.py         # Supporting script
+│   ├── test.py          # Testing utilities
+│   ├── requirements.txt # Dependencies
+│   ├── Static/          # CSS, JS, assets
+│   └── Templates/       # HTML templates
+
+📊 Results
+
+Achieved high accuracy with Random Forest and XGBoost classifiers.
+
+Feature importance shows profile completeness, activity ratio, and engagement patterns as strong indicators of fake accounts.
+
+Visualizations included for interpretability and model evaluation.
