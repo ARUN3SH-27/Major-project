@@ -48,18 +48,6 @@ Flask will start a server at:
 
 Open it in your browser → you’ll see the Fake Account Detection dashboard.
 
-📂 Project Structure
-.
-├── Dynamic/
-│   ├── app.py           # Main Flask application
-│   ├── fusers.csv       # Fake users dataset
-│   ├── users.csv        # Real users dataset
-│   ├── image.py         # Supporting script
-│   ├── test.py          # Testing utilities
-│   ├── requirements.txt # Dependencies
-│   ├── Static/          # CSS, JS, assets
-│   └── Templates/       # HTML templates
-
 📊 Results
 
 Achieved high accuracy with Random Forest and XGBoost classifiers.
