@@ -8,24 +8,25 @@ Problem
 Fake accounts on social media spread misinformation, scams, and spam, undermining trust and security. Traditional detection methods often fail to adapt to diverse patterns of fake accounts.
 
 Proposed Solution
-We built a detection system that leverages:
+We developed a detection system that leverages a hybrid of:
 
-Random Forest & SVM → baseline classification accuracy.
+Random Forest (RF) → captures non-linear dependencies and improves robustness.
 
-XGBoost → fine-tuned detection and better handling of feature importance.
+Gradient Boosting (GB) → enhances detection accuracy with iterative boosting.
 
-Flask Web App → provides an interactive interface for users to test accounts.
+Logistic Regression (LR) → provides a simple yet effective baseline for interpretability.
 
 Key Features
 
 Preprocessing pipeline: missing value handling, feature encoding, normalization.
 
-Model training and evaluation with accuracy metrics & feature importance plots.
+Model training and evaluation using RF, GB, and LR.
 
-Flask-based web interface (Templates/ + Static/) for real-time account classification.
+Feature importance analysis for explainability.
 
-MongoDB integration for storing and exporting datasets (users.csv, fusers.csv).
+Flask web interface (Templates/ + Static/) for real-time account classification.
 
+MongoDB integration for raw data collection, exported into users.csv (real) and fusers.csv (fake) while introducing a cache mechanism.
 ⚡ How to Run Your App
 
 Since your main entry point is app.py, here’s what to do:
