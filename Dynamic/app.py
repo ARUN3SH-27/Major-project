@@ -24,8 +24,8 @@ def format_date_filter(value):
     return value.strftime('%Y-%m-%d')
 
 # MongoDB Connection
-#MONGO_URI = "mongodb+srv://aayushiagarwal580:9Yz0jtzzc793TBmK@cluster0.odpct.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
-MONGO_URI ="mongodb+srv://aayushiagarwal580:9Yz0jtzzc793TBmK@cluster0.odpct.mongodb.net/?retryWrites=true&w=majority"
+
+MONGO_URI ="add you mongodb uri with database"
 
 client = MongoClient(MONGO_URI)
 db = client["fake2"]
@@ -47,10 +47,10 @@ def comma_filter(value):
 
 # Twitter API Configuration
 BEARER_TOKENS = [
-    os.getenv("BEARER_TOKEN_1", "AAAAAAAAAAAAAAAAAAAAAANoxAEAAAAARIratdNtUpsn7Gxk5YZHrDgXVmI%3DhdjZY09cKTCe7xAioFXli8PM2qq68rtGjVcqFwYAvGjlnAARsY"),
-    os.getenv("BEARER_TOKEN_2", "AAAAAAAAAAAAAAAAAAAAALOhywEAAAAAW8Oi86wzl4ft4tnhzRlyZ3%2FFGF8%3D4ItRbnSYTeK9jcWopAugYeMcqfAOypNi5gBERQ4wBjY4aq9phL"),
-    os.getenv("BEARER_TOKEN_3", "AAAAAAAAAAAAAAAAAAAAACzpygEAAAAA8k18d8ZP23NtWodqYI5x6mwfS58%3DDLK7sv0qrqEu7u7bovNoHegux5EkHiVhKqp41jPV1mKzYRcQMm"),
-    os.getenv("BEARER_TOKEN_4", " AAAAAAAAAAAAAAAAAAAAACg7zAEAAAAABBikdwYlorE2FeNpNqrkT8uV1fk%3DsxxU1YZAYwO0G56tjTPSElgal0CEy0HF3zJ4a5jtpmTdRyO4h7")
+    os.getenv("BEARER_TOKEN_1", "twitterapitokenhere"),
+    os.getenv("BEARER_TOKEN_2", "here"),
+    os.getenv("BEARER_TOKEN_3", "here"),
+    os.getenv("BEARER_TOKEN_4", " and here")
 ]
 API_ENDPOINT = "https://api.twitter.com/2/users/by/username/"
 REQUIRED_FEATURES = ['followers_count', 'friends_count', 'statuses_count', 'listed_count']
@@ -232,4 +232,5 @@ def analyze():
     except Exception as e:
         return render_template('error.html', error=str(e)), 500
 if __name__ == '__main__':
+
     app.run(debug=True)
