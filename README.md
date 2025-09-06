@@ -1,4 +1,3 @@
-this project was co-developed by Surajith pranav
 🌍 LRX: Air Quality Index (AQI) Prediction and Visualization
 
 This repository contains the implementation of LRX, a hybrid predictive model for real-time Air Quality Index (AQI) forecasting and visualization.
