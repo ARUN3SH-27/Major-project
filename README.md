@@ -49,6 +49,8 @@ Flask will start a server at:
 
 Open it in your browser → you’ll see the Fake Account Detection dashboard.
 
+reminder to add your mongodb database URI and twitter API tokens in app.py and test.py
+
 📊 Results
 
 Achieved high accuracy with Random Forest and XGBoost classifiers.
